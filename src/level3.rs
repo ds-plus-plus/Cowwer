@@ -29,146 +29,40 @@ pub fn spawn_tilemap(
     if let Some(tile_map) = tilemap.get(tilemap_handle.0.id()) {
         for (y, row) in tile_map.map.iter().rev().enumerate() {
             for (x, &tile) in row.iter().enumerate() {
-                if tile == 9 {
-                    tilemap::spawn_bg_tile(
-                        &mut commands,
-                        background_handle.0.clone(),
-                        x,
-                        y,
-                        tile_map,
-                    );
+                tilemap::spawn_bg_tile(&mut commands, background_handle.0.clone(), x, y, tile_map);
 
-                    player::spawn_player(&mut commands, player_handle.0.clone(), x, y, tile_map);
-                } else if tile == 0 {
-                    tilemap::spawn_bg_tile(
-                        &mut commands,
-                        background_handle.0.clone(),
-                        x,
-                        y,
-                        tile_map,
-                    );
-                } else if tile == 1 {
-                    commands.spawn((
-                        tilemap::Decayable,
-                        RigidBody::Fixed,
-                        Collider::cuboid(tile_map.width as f32 / 2., tile_map.height as f32 / 2.),
-                        Restitution::coefficient(0.7),
-                        Sprite::from_image(ground_handle.0.clone()),
-                        Transform::from_xyz(
-                            ((x * tile_map.width) as f32 + (tile_map.width / 2) as f32)
-                                * tile_map.scale as f32,
-                            ((y * tile_map.height) as f32 + (tile_map.height / 2) as f32)
-                                * tile_map.scale as f32,
-                            -1.,
-                        )
-                        .with_scale(Vec3::splat(tile_map.scale as f32)),
-                    ));
-                } else if tile == 2 {
-                    tilemap::spawn_bg_tile(
-                        &mut commands,
-                        background_handle.0.clone(),
-                        x,
-                        y,
-                        tile_map,
-                    );
-
-                    obstacles::spawn_electricity(&mut commands, &asset_server, x, y, tile_map);
-                } else if tile == 3 {
-                    tilemap::spawn_bg_tile(
-                        &mut commands,
-                        background_handle.0.clone(),
-                        x,
-                        y,
-                        tile_map,
-                    );
-
-                    obstacles::spawn_dancing_spike(
-                        &mut commands,
-                        dancing_spike_handle.0.clone(),
-                        x,
-                        y,
-                        tile_map,
-                        -1.,
-                    );
-                } else if tile == 4 {
-                    commands.spawn((
-                        tilemap::Decayable,
-                        RigidBody::Fixed,
-                        Collider::cuboid(tile_map.width as f32 / 2., tile_map.height as f32 / 2.),
-                        Sprite::from_image(ground_handle.0.clone()),
-                        Transform::from_xyz(
-                            ((x * tile_map.width) as f32 + (tile_map.width / 2) as f32)
-                                * tile_map.scale as f32,
-                            ((y * tile_map.height) as f32 + (tile_map.height / 2) as f32)
-                                * tile_map.scale as f32,
-                            -1.,
-                        )
-                        .with_scale(Vec3::splat(tile_map.scale as f32)),
-                    ));
-
-                    obstacles::spawn_spike_sensor(
-                        &mut commands,
-                        ground_handle.0.clone(),
-                        x,
-                        y,
-                        tile_map,
-                    );
-                } else if tile == 5 {
-                    tilemap::spawn_bg_tile(
-                        &mut commands,
-                        background_handle.0.clone(),
-                        x,
-                        y,
-                        tile_map,
-                    );
-
-                    random_crate::spawn_crate(
-                        &mut commands,
-                        crate_handle.0.clone(),
-                        x,
-                        y,
-                        tile_map,
-                    );
-                } else if tile == 6 {
-                    tilemap::spawn_bg_tile(
-                        &mut commands,
-                        background_handle.0.clone(),
-                        x,
-                        y,
-                        tile_map,
-                    );
-
-                    obstacles::spawn_pressure_plate(
-                        &mut commands,
-                        pressure_plate_handle.0.clone(),
-                        x,
-                        y,
-                        tile_map,
-                    );
-                } else if tile == 7 {
-                    tilemap::spawn_next_level(
-                        &mut commands,
-                        next_level_handle.0.clone(),
-                        x,
-                        y,
-                        tile_map,
-                    );
-                } else if tile == 8 {
-                    tilemap::spawn_bg_tile(
-                        &mut commands,
-                        background_handle.0.clone(),
-                        x,
-                        y,
-                        tile_map,
-                    );
-
-                    obstacles::spawn_landmine(
-                        &mut commands,
-                        landmine_handle.0.clone(),
-                        x,
-                        y,
-                        tile_map,
-                    );
+                match tile {
+                    9 => player::spawn_player(&mut commands, player_handle.0.clone(), x, y, tile_map),
+                    0 => {}
+                    1 => {
+                        commands.spawn((
+                            tilemap::Decayable,
+                            RigidBody::Fixed,
+                            Collider::cuboid(tile_map.width as f32 / 2., tile_map.height as f32 / 2.),
+                            Restitution::coefficient(0.7),
+                            Sprite::from_image(ground_handle.0.clone()),
+                            Transform::from_translation(tile_map.grid_to_world(x, y, -1.0))
+                                .with_scale(Vec3::splat(tile_map.scale as f32)),
+                        ));
+                    }
+                    2 => obstacles::spawn_electricity(&mut commands, &asset_server, x, y, tile_map),
+                    3 => obstacles::spawn_dancing_spike(&mut commands, dancing_spike_handle.0.clone(), x, y, tile_map, -1.),
+                    4 => {
+                        commands.spawn((
+                            tilemap::Decayable,
+                            RigidBody::Fixed,
+                            Collider::cuboid(tile_map.width as f32 / 2., tile_map.height as f32 / 2.),
+                            Sprite::from_image(ground_handle.0.clone()),
+                            Transform::from_translation(tile_map.grid_to_world(x, y, -1.0))
+                                .with_scale(Vec3::splat(tile_map.scale as f32)),
+                        ));
+                        obstacles::spawn_spike_sensor(&mut commands, ground_handle.0.clone(), x, y, tile_map);
+                    }
+                    5 => random_crate::spawn_crate(&mut commands, crate_handle.0.clone(), x, y, tile_map),
+                    6 => obstacles::spawn_pressure_plate(&mut commands, pressure_plate_handle.0.clone(), x, y, tile_map),
+                    7 => tilemap::spawn_next_level(&mut commands, next_level_handle.0.clone(), x, y, tile_map),
+                    8 => obstacles::spawn_landmine(&mut commands, landmine_handle.0.clone(), x, y, tile_map),
+                    _ => {}
                 }
             }
         }

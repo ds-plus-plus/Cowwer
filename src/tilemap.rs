@@ -52,6 +52,16 @@ pub struct Tilemap {
     pub map: Vec<Vec<u8>>,
 }
 
+impl Tilemap {
+    pub fn grid_to_world(&self, x: usize, y: usize, z: f32) -> Vec3 {
+        Vec3::new(
+            ((x * self.width) as f32 + (self.width / 2) as f32) * self.scale as f32,
+            ((y * self.height) as f32 + (self.height / 2) as f32) * self.scale as f32,
+            z,
+        )
+    }
+}
+
 pub const VOID_MASK: u32 = 0b1000;
 pub const NEXT_LEVEL_MASK: u32 = 0b111111;
 
@@ -82,16 +92,11 @@ pub fn spawn_bg_tile(
     y: usize,
     tilemap: &Tilemap,
 ) {
-    let pos = Vec3::new(
-        ((x * tilemap.width) as f32 + (tilemap.width / 2) as f32) * tilemap.scale as f32,
-        ((y * tilemap.height) as f32 + (tilemap.height / 2) as f32) * tilemap.scale as f32,
-        -1.,
-    );
-
     commands.spawn((
         Decayable,
         Sprite::from_image(handle),
-        Transform::from_translation(pos).with_scale(Vec3::splat(tilemap.scale as f32)),
+        Transform::from_translation(tilemap.grid_to_world(x, y, -2.0))
+            .with_scale(Vec3::splat(tilemap.scale as f32)),
     ));
 }
 
@@ -107,12 +112,8 @@ pub fn spawn_next_level(
         NextLevel,
         Collider::cuboid(tilemap.width as f32 / 2., tilemap.height as f32 / 2.),
         Sprite::from_image(handle.clone()),
-        Transform::from_xyz(
-            ((x * tilemap.width) as f32 + (tilemap.width / 2) as f32) * tilemap.scale as f32,
-            ((y * tilemap.height) as f32 + (tilemap.height / 2) as f32) * tilemap.scale as f32,
-            -1.,
-        )
-        .with_scale(Vec3::splat(tilemap.scale as f32)),
+        Transform::from_translation(tilemap.grid_to_world(x, y, -1.0))
+            .with_scale(Vec3::splat(tilemap.scale as f32)),
         Sensor,
         ActiveCollisionTypes::all(),
         ActiveEvents::COLLISION_EVENTS,

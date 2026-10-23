@@ -144,13 +144,9 @@ pub fn spawn_player(
         ),
         ActiveCollisionTypes::all(),
         Sprite::from_image(handle.clone()),
-        Transform::from_xyz(
-            ((x * tilemap.width) as f32 + (tilemap.width / 2) as f32) * tilemap.scale as f32,
-            ((y * tilemap.height) as f32 + (tilemap.height / 2) as f32) * tilemap.scale as f32,
-            1.,
-        )
-        .with_scale(Vec3::splat(tilemap.scale as f32 * 0.75))
-        .with_rotation(Quat::from_rotation_z(-std::f32::consts::FRAC_PI_2)),
+        Transform::from_translation(tilemap.grid_to_world(x, y, 1.0))
+            .with_scale(Vec3::splat(tilemap.scale as f32 * 0.75))
+            .with_rotation(Quat::from_rotation_z(-std::f32::consts::FRAC_PI_2)),
     ));
 }
 

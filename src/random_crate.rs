@@ -53,12 +53,8 @@ pub fn spawn_crate(
         ActiveCollisionTypes::all(),
         ActiveEvents::COLLISION_EVENTS,
         Sprite::from_image(handle.clone()),
-        Transform::from_xyz(
-            ((x * tilemap.width) as f32 + (tilemap.width / 2) as f32) * tilemap.scale as f32,
-            ((y * tilemap.height) as f32 + (tilemap.height / 2) as f32) * tilemap.scale as f32,
-            0.,
-        )
-        .with_scale(Vec3::splat(tilemap.scale as f32)),
+        Transform::from_translation(tilemap.grid_to_world(x, y, 0.0))
+            .with_scale(Vec3::splat(tilemap.scale as f32)),
     ));
 }
 

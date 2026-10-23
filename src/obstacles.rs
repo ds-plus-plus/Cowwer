@@ -120,12 +120,8 @@ pub fn spawn_landmine(
         ActiveCollisionTypes::all(),
         ActiveEvents::COLLISION_EVENTS,
         Sprite::from_image(handle.clone()),
-        Transform::from_xyz(
-            ((x * tilemap.width) as f32 + (tilemap.width / 2) as f32) * tilemap.scale as f32,
-            ((y * tilemap.height) as f32 + (tilemap.height / 2) as f32) * tilemap.scale as f32,
-            0.,
-        )
-        .with_scale(Vec3::splat(tilemap.scale as f32)),
+        Transform::from_translation(tilemap.grid_to_world(x, y, 0.0))
+            .with_scale(Vec3::splat(tilemap.scale as f32)),
     ));
 }
 
@@ -143,12 +139,8 @@ pub fn spawn_dancing_spike(
         SpikeDirection(direction),
         Collider::ball(3.),
         Sprite::from_image(handle.clone()),
-        Transform::from_xyz(
-            ((x * tilemap.width) as f32 + (tilemap.width / 2) as f32) * tilemap.scale as f32,
-            ((y * tilemap.height) as f32 + (tilemap.height / 2) as f32) * tilemap.scale as f32,
-            0.,
-        )
-        .with_scale(Vec3::splat(tilemap.scale as f32)),
+        Transform::from_translation(tilemap.grid_to_world(x, y, 0.0))
+            .with_scale(Vec3::splat(tilemap.scale as f32)),
         Sensor,
         ActiveCollisionTypes::all(),
         ActiveEvents::COLLISION_EVENTS,
@@ -172,12 +164,8 @@ pub fn spawn_spike_sensor(
         SpikeDirectionSensor,
         Collider::cuboid(tilemap.width as f32 / 2., tilemap.height as f32 / 2.),
         Sprite::from_image(handle.clone()),
-        Transform::from_xyz(
-            ((x * tilemap.width) as f32 + (tilemap.width / 2) as f32) * tilemap.scale as f32,
-            ((y * tilemap.height) as f32 + (tilemap.height / 2) as f32) * tilemap.scale as f32,
-            -0.,
-        )
-        .with_scale(Vec3::splat(tilemap.scale as f32)),
+        Transform::from_translation(tilemap.grid_to_world(x, y, 0.0))
+            .with_scale(Vec3::splat(tilemap.scale as f32)),
         Sensor,
         ActiveCollisionTypes::all(),
         ActiveEvents::COLLISION_EVENTS,
@@ -200,12 +188,8 @@ pub fn spawn_electricity(
         Electricity,
         Collider::cuboid(tilemap.width as f32 / 2., tilemap.height as f32 / 2.),
         Sprite::from_image(asset_server.load("tilemap/tiles/electricity/electricityl1.png")),
-        Transform::from_xyz(
-            ((x * tilemap.width) as f32 + (tilemap.width / 2) as f32) * tilemap.scale as f32,
-            ((y * tilemap.height) as f32 + (tilemap.height / 2) as f32) * tilemap.scale as f32,
-            -0.,
-        )
-        .with_scale(Vec3::splat(tilemap.scale as f32)),
+        Transform::from_translation(tilemap.grid_to_world(x, y, 0.0))
+            .with_scale(Vec3::splat(tilemap.scale as f32)),
         Sensor,
         ActiveCollisionTypes::all(),
         ActiveEvents::COLLISION_EVENTS,
@@ -236,12 +220,8 @@ pub fn spawn_pressure_plate(
         ActiveCollisionTypes::all(),
         ActiveEvents::COLLISION_EVENTS,
         Sprite::from_image(handle.clone()),
-        Transform::from_xyz(
-            ((x * tilemap.width) as f32 + (tilemap.width / 2) as f32) * tilemap.scale as f32,
-            ((y * tilemap.height) as f32 + (tilemap.height / 2) as f32) * tilemap.scale as f32,
-            0.,
-        )
-        .with_scale(Vec3::splat(tilemap.scale as f32)),
+        Transform::from_translation(tilemap.grid_to_world(x, y, 0.0))
+            .with_scale(Vec3::splat(tilemap.scale as f32)),
     ));
 }
 
